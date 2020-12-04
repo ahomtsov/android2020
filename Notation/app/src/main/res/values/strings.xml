@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Калькулятор счисления</string>
+    <string name="info_input_text">Впишите число и выберите систему счисления для перевода</string>
+    <string name="info_result_text">Ответ:</string>
+</resources>
