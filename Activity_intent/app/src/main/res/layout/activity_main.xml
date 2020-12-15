@@ -14,10 +14,7 @@
 
         android:layout_marginTop="50dp"
         android:text="@string/title_lab"
-        android:textSize="36sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textSize="36sp" />
 
     <TextView
         android:id="@+id/viewResultNumber"
@@ -25,11 +22,8 @@
         style="@style/BasicDisposition"
 
         android:layout_marginTop="100dp"
-        android:text="0"
-        android:textSize="36sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="@string/_0"
+        android:textSize="36sp" />
 
     <EditText
         android:id="@+id/viewEnterNumber"
@@ -38,10 +32,7 @@
 
         android:layout_marginTop="100dp"
         android:ems="10"
-        android:inputType="number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewResultNumber" />
+        android:inputType="number" />
 
     <Button
         android:id="@+id/buttonOk"
@@ -49,9 +40,6 @@
         style="@style/BasicDisposition"
 
         android:layout_marginTop="100dp"
-        android:text="OK"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewEnterNumber" />
+        android:text="@string/ok_button"
+        android:textSize="16sp" />
 </LinearLayout>

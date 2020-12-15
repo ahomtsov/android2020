@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Активность_намерение</string>
     <string name="title_lab">Лабораторная 2</string>
+    <string name="ok_button">ОК</string>
 </resources>

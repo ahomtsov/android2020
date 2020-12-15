@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">Activity_intent</string>
     <string name="title_lab">Lab 2</string>
+    <string name="ok_button">OK</string>
+    <string name="_0" translatable="false">0</string>
 </resources>
