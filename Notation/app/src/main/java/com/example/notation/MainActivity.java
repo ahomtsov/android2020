@@ -2,11 +2,14 @@ package com.example.notation;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,7 +20,22 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private NotationServiceBroadcastReceiver broadcastReceiver;
+    private NotationService notationService;
+    private boolean isNotationServiceBound = false;
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            NotationService.NotationServiceBinder binder = (NotationService.NotationServiceBinder) iBinder;
+            notationService = binder.getService();
+            isNotationServiceBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            isNotationServiceBound = false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,67 +51,51 @@ public class MainActivity extends AppCompatActivity {
         welcomeTextViewLayoutParams.width = buttonWidth;
         welcomeTextView.setLayoutParams(welcomeTextViewLayoutParams);
 
-        broadcastReceiver = new NotationServiceBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter(NotationService.ACTION_NOTATIONSERVICE);
-        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = new Intent(this, NotationService.class);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (isNotationServiceBound) {
+            unbindService(serviceConnection);
+            isNotationServiceBound = false;
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         EditText inputEditText = findViewById(R.id.inputEditText);
         Integer enteredNumber;
         if (inputEditText.getText().toString().equals("")) enteredNumber = 0;
         else enteredNumber = Integer.parseInt(inputEditText.getText().toString());
-        ArrayList<Integer> infoIntent = new ArrayList<Integer>();
-        infoIntent.add(enteredNumber);
 
         int id = item.getItemId();
         switch(id){
             case R.id.binary_settings:
-                Intent binaryIntent = new Intent(MainActivity.this, NotationService.class);
-                infoIntent.add(1);
-                binaryIntent.putExtra("INFO", infoIntent);
-                startService(binaryIntent);
+                notationService.decimalToBinary(findViewById(R.id.notationResultTextView), enteredNumber);
                 break;
             case R.id.octal_settings:
-                Intent octalIntent = new Intent(MainActivity.this, NotationService.class);
-                infoIntent.add(2);
-                octalIntent.putExtra("INFO", infoIntent);
-                startService(octalIntent);
+                notationService.decimalToOctal(findViewById(R.id.notationResultTextView), enteredNumber);
                 break;
             case R.id.hex_settings:
-                Intent hexIntent = new Intent(MainActivity.this, NotationService.class);
-                infoIntent.add(3);
-                hexIntent.putExtra("INFO", infoIntent);
-                startService(hexIntent);
+                notationService.decimalToHex(findViewById(R.id.notationResultTextView), enteredNumber);
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(broadcastReceiver);
-        Toast.makeText(getApplicationContext(), "Остановка сервиса", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(MainActivity.this, NotationService.class);
-        stopService(intent);
-    }
-
-    public class NotationServiceBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String resultNumber = intent.getStringExtra("RESULT");
-            TextView resultTextView = findViewById(R.id.notationResultTextView);
-            resultTextView.setText(resultNumber);
-        }
-    }
 }
